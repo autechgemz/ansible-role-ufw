@@ -1,0 +1,6 @@
+---
+- name: Restart service
+  ansible.builtin.systemd:
+    name: "{{ ufw_service_name }}"
+    state: restarted
+  when: not ansible_check_mode

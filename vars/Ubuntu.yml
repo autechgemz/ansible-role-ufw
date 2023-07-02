@@ -1,0 +1,6 @@
+---
+
+ufw_package_name:
+  - 'ufw'
+
+ufw_service_name: 'ufw'

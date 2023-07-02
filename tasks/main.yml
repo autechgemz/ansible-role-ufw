@@ -1,0 +1,30 @@
+---
+
+- name: Main tasks
+  when: ansible_facts['distribution'] == 'Ubuntu'
+  tags:
+    - ufw_install
+    - ufw_config
+    - ufw_service
+    - ufw_policy
+    - ufw
+  block:
+  - name: Set dependency variables
+    ansible.builtin.include_vars: "{{ item }}"
+    loop: 
+      - "{{ ansible_distribution }}.yml"
+  - name: Installation tasks
+    ansible.builtin.import_tasks: install.yml
+  - name: Configration tasks
+    ansible.builtin.import_tasks: config.yml
+  - name: Setup tasks
+    ansible.builtin.import_tasks: setup.yml
+  - name: User Policy tasks
+    ansible.builtin.import_tasks: policy.yml
+  - name: Service tasks
+    ansible.builtin.import_tasks: service.yml
+  rescue:
+    - name: Print Error
+      ansible.builtin.debug:
+        msg: "Unsupport platform or error occurred due to some reason."
+      failed_when: true

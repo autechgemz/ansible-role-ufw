@@ -1,0 +1,14 @@
+---
+
+- name: Install tasks
+  become: true
+  tags:
+    - ufw_install
+    - ufw
+  block:
+    - name: Manage install packages
+      ansible.builtin.apt:
+        name: ["{{ item }}"]
+        update_cache: true
+        state: "{{ ufw_package_ensure }}"
+      with_items: "{{ ufw_package_name }}"

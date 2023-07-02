@@ -1,0 +1,4 @@
+# {{ ansible_managed }} 
+{% for before_policy in ufw_before_rules_data %}
+{{ before_policy }}
+{% endfor %}

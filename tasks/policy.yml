@@ -1,0 +1,56 @@
+---
+
+- name: Policy tasks
+  when:
+    - ufw_policy_manage is defined and ufw_policy_manage|bool
+    - ufw_policy_data is defined and ufw_policy_data
+  become: true
+  block:
+    - name: Apply user policies
+      ansible.builtin.shell: >
+        {% if item.ensure is defined and item.ensure == 'present' %}
+        {%   if item.interface is defined and item.interface %}
+        {%     if item['port'] is defined and item['port'] == 'any' %}
+          set -o pipefail && ufw --dry-run {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} | grep -qE 'Skipping' || \
+          ufw {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }}
+        {%     else %}
+          set -o pipefail && ufw --dry-run {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }} | grep -qE 'Skipping' || \
+          ufw {% if item['ensure'] is defined and item['ensure'] == 'absent' %}delete{% endif %}{{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }}
+        {%     endif %}
+        {%   else %}
+        {%     if item['port'] is defined and item['port'] == 'any' %}
+          set -o pipefail && ufw --dry-run {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} | grep -qE 'Skipping' || \
+          ufw {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }}
+        {%     else %}
+          set -o pipefail && ufw --dry-run {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }} | grep -qE 'Skipping' || \
+          ufw {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }}
+        {%     endif %}
+        {%   endif %}
+        {% else %}
+        {%   if item.interface is defined and item.interface %}
+        {%     if item['port'] is defined and item['port'] == 'any' %}
+          set -o pipefail && ufw --dry-run delete {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} | grep -qE 'Skipping' || \
+          ufw delete {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }}
+        {%     else %}
+          set -o pipefail && ufw --dry-run delete {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }} | grep -qE 'Skipping' || \
+          ufw delete {{ item.policy }} {{ item.direction }} on {{ item.interface }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }}
+        {%     endif %}
+        {%   else %}
+        {%     if item['port'] is defined and item['port'] == 'any' %}
+          set -o pipefail && ufw --dry-run delete {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} | grep -qE 'Skipping' || \
+          ufw delete {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }}
+        {%     else %}
+          set -o pipefail && ufw --dry-run delete {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }} | grep -qE 'Skipping' || \
+          ufw delete {{ item.policy }} {{ item.direction }} proto {{ item.proto }} from {{ item.from }} to {{ item.to }} port {{ item.port }}
+        {%     endif %}
+        {%   endif %}
+        {% endif %}
+      args:
+        executable: /bin/bash
+      changed_when: '"Rule added" in ufw_dryrun_results.stdout or "Rules updated" in ufw_dryrun_results.stdout or "Rule deleted" in ufw_dryrun_results.stdout'
+      register: ufw_dryrun_results
+      with_items: "{{ ufw_policy_data }}"
+
+    - name: Debug user policies
+      ansible.builtin.include_tasks: debug/policy.yml
+      when: ufw_debug is defined and ufw_debug

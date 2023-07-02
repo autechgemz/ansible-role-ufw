@@ -1,0 +1,14 @@
+---
+
+- name: Service tasks
+  when: not ansible_check_mode
+  become: true
+  tags:
+    - ufw_service
+    - ufw
+  block:
+    - name: Manage ufw service
+      ansible.builtin.service:
+        name: "{{ ufw_service_name }}"
+        state: "{{ ufw_service_ensure }}"
+        enabled: "{{ ufw_service_enable }}"

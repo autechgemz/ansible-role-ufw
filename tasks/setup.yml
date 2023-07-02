@@ -1,0 +1,58 @@
+---
+
+- name: Setup tasks
+  become: true
+  tags:
+    - ufw_setup
+    - ufw
+  block:
+    - name: Manage ufw empty purge
+      when: ufw_policy_empty_purge is defined and ufw_policy_empty_purge
+      ansible.builtin.shell: >
+        ufw --force reset
+      args:
+        executable: /bin/bash
+      changed_when: '"Action" in ufw_emptypurge_results.stdout'
+      register: ufw_emptypurge_results
+  
+    - name: Check ufw status
+      ansible.builtin.shell: >
+        set -o pipefail && ufw status | grep 'Status' | awk '{print $2}'
+      args:
+        executable: /bin/bash
+      changed_when: false
+      register: ufw_status_results
+  
+    - name: Enable ufw status
+      when:
+        - ufw_status is defined and ufw_status
+        - '"inactive" in ufw_status_results.stdout'
+        - not ansible_check_mode
+      changed_when: false
+      ansible.builtin.shell: >
+        ufw --force enable
+      args:
+        executable: /bin/bash
+  
+    - name: Disable ufw status
+      when:
+        - ufw_status is defined and not ufw_status
+        - '"active" in ufw_status_results.stdout'
+        - not ansible_check_mode
+      changed_when: false
+      ansible.builtin.shell: >
+        ufw --force disable
+      args:
+        executable: /bin/bash
+  
+    - name: Manage ufw logging level
+      when:
+        - ufw_logging_level is defined and ufw_logging_level
+        - (ufw_logging_level == 'off' or ufw_logging_level == 'low' or
+          ufw_logging_level == 'medium' or ufw_logging_level == 'high' or
+          ufw_logging_level == 'full')
+      ansible.builtin.lineinfile:
+        path: /etc/ufw/ufw.conf
+        regexp: '^LOGLEVEL='
+        line: "LOGLEVEL={{ ufw_logging_level }}"
+  

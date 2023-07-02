@@ -1,0 +1,14 @@
+galaxy_info:
+  role_name: ufw
+  author: "autechgemz@gmail.com"
+  description: "Manage Uncomplicated Firewall(UFW) service."
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+  galaxy_tags:
+    - security
+dependencies: []

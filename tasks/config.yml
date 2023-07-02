@@ -1,0 +1,76 @@
+---
+
+- name: Configration tasks
+  become: true
+  tags:
+    - ufw_config
+    - ufw
+  block:
+    - name: Manage ufw config
+      ansible.builtin.template:
+        src: ufw.j2
+        dest: /etc/default/ufw
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart service
+      when:
+        - ufw_config_manage is defined and ufw_config_manage
+        - ufw_config_options is defined and ufw_config_options
+  
+    - name: Manage ufw sysctl config
+      ansible.builtin.template:
+        src: sysctl.conf.j2
+        dest: /etc/ufw/sysctl.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart service
+      when:
+        - ufw_sysctl_manage is defined and ufw_sysctl_manage
+        - ufw_config_sysctl_options is defined and ufw_config_sysctl_options
+  
+    - name: Manage ufw before rules
+      ansible.builtin.template:
+        src: before.rules.j2
+        dest: /etc/ufw/before.rules
+        owner: root
+        group: root
+        mode: 0644
+      when:
+        - ufw_before_rules_manage is defined and ufw_before_rules_manage
+        - ufw_before_rules_data is defined and ufw_before_rules_data
+  
+    - name: Manage ufw before6 rules
+      ansible.builtin.template:
+        src: before6.rules.j2
+        dest: /etc/ufw/before6.rules
+        owner: root
+        group: root
+        mode: 0644
+      when:
+        - ufw_before6_rules_manage is defined and ufw_before6_rules_manage
+        - ufw_before6_rules_data is defined and ufw_before6_rules_data
+  
+    - name: Manage ufw after rules
+      ansible.builtin.template:
+        src: after.rules.j2
+        dest: /etc/ufw/after.rules
+        owner: root
+        group: root
+        mode: 0644
+      when:
+        - ufw_after_rules_manage is defined and ufw_after_rules_manage
+        - ufw_after_rules_data is defined and ufw_after_rules_data
+  
+    - name: Manage ufw after6 rules
+      ansible.builtin.template:
+        src: after6.rules.j2
+        dest: /etc/ufw/after6.rules
+        owner: root
+        group: root
+        mode: 0644
+      when:
+        - ufw_after6_rules_manage is defined and ufw_after6_rules_manage
+        - ufw_after6_rules_data is defined and ufw_after6_rules_data
+  

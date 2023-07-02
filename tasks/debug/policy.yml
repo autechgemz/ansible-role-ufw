@@ -1,0 +1,5 @@
+---
+- name: Debug user policies
+  when: ufw_debug is defined and ufw_debug
+  ansible.builtin.debug:
+    var: ufw_dryrun_results['results']|map(attribute='stdout')
