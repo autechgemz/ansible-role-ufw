@@ -11,7 +11,7 @@
   block:
   - name: Set dependency variables
     ansible.builtin.include_vars: "{{ item }}"
-    loop: 
+    loop:
       - "{{ ansible_distribution }}.yml"
   - name: Installation tasks
     ansible.builtin.import_tasks: install.yml

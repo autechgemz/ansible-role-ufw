@@ -8,7 +8,6 @@
   block:
     - name: Manage install packages
       ansible.builtin.apt:
-        name: ["{{ item }}"]
+        name: "{{ ufw_package_name }}"
         update_cache: true
         state: "{{ ufw_package_ensure }}"
-      with_items: "{{ ufw_package_name }}"

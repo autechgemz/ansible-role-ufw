@@ -52,5 +52,5 @@
       with_items: "{{ ufw_policy_data }}"
 
     - name: Debug user policies
-      ansible.builtin.include_tasks: debug/policy.yml
       when: ufw_debug is defined and ufw_debug
+      ansible.builtin.include_tasks: debug/policy.yml
