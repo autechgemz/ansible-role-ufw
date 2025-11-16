@@ -98,7 +98,7 @@ ufw_policy_empty_purge: false
 ufw_policy_manage: false
 ```
 
-### ufw_policy_data: (dict)
+### ufw_policy_data: (list)
 
 ```yaml
 ufw_policy_data: []
@@ -110,7 +110,7 @@ ufw_policy_data: []
 ufw_after_rules_manage: false
 ```
 
-### ufw_after_rules_data: (list)
+### ufw_after_rules_data: (string)
 
 ```yaml
 ufw_after_rules_data: |
@@ -134,7 +134,7 @@ ufw_after_rules_data: |
 ufw_after6_rules_manage: false
 ```
 
-### ufw_after6_rules_data: (list)
+### ufw_after6_rules_data: (string)
 
 ```yaml
 ufw_after6_rules_data: |
@@ -157,7 +157,7 @@ ufw_after6_rules_data: |
 ufw_before_rules_manage: false
 ```
 
-### ufw_before_rules_data: (list)
+### ufw_before_rules_data: (string)
 
 ```yaml
 ufw_before_rules_data: |
@@ -199,7 +199,7 @@ ufw_before_rules_data: |
 ufw_before6_rules_manage: false
 ```
 
-### ufw_before6_rules_data: (list)
+### ufw_before6_rules_data: (string)
 
 ```yaml
 ufw_before6_rules_data: |
