@@ -9,5 +9,5 @@
     - name: Manage install packages
       ansible.builtin.apt:
         name: "{{ ufw_package_name }}"
-        update_cache: true
         state: "{{ ufw_package_ensure }}"
+        update_cache: true
