@@ -31,3 +31,5 @@ pip-selfcheck.json
 .DS_Store
 # Ansible
 *.retry
+.ansible
+.venv

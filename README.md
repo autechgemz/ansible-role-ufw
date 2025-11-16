@@ -14,12 +14,11 @@ None
 
 ## OS Platforms
 
-- Ubuntu focal
-- Ubuntu jammy
+- Ubuntu focal+
 
 ## Example Playbook
 
-```
+```yaml
 - hosts: all
   roles:
     - ufw
@@ -27,53 +26,51 @@ None
 
 ## Role Variables
 
----
-
 ### ufw_package_ensure: (string)
 
-```
+```yaml
 ufw_package_ensure: 'present'
 ```
 
 ### ufw_debug: (bool)
 
-```
+```yaml
 ufw_debug: false
 ```
 
 ### ufw_service_ensure: (string)
 
-```
+```yaml
 ufw_service_ensure: 'started'
 ```
 
 ### ufw_service_enable: (bool)
 
-```
+```yaml
 ufw_service_enable: true
 ```
 
 ### ufw_status: (bool)
 
-```
+```yaml
 ufw_status: true
 ```
 
 ### ufw_logging_level: (off, low, medium, high, full)
 
-```
+```yaml
 ufw_logging_level: 'low'
 ```
 
 ### ufw_config_manage: (bool)
 
-```
+```yaml
 ufw_config_manage: true
 ```
 
 ### ufw_config_options: (dict)
 
-```
+```yaml
 ufw_config_options:
   IPV6: "no"
   DEFAULT_INPUT_POLICY: "ACCEPT"
@@ -87,13 +84,13 @@ ufw_config_options:
 
 ### ufw_sysctl_manage: (bool)
 
-```
+```yaml
 ufw_sysctl_manage: true
 ```
 
 ### ufw_config_sysctl_options: (dict)
 
-```
+```yaml
 ufw_config_sysctl_options:
   net/ipv4/conf/all/accept_redirects: 0
   net/ipv4/conf/default/accept_redirects: 0
@@ -108,19 +105,19 @@ ufw_config_sysctl_options:
 
 ### ufw_policy_empty_purge: (bool)
 
-```
+```yaml
 ufw_policy_empty_purge: false
 ```
 
 ### ufw_policy_manage: (bool)
 
-```
+```yaml
 ufw_policy_manage: false
 ```
 
 ### ufw_policy_data: (dict)
 
-```
+```yaml
 ufw_policy_data: {}
  - ensure: 'present'    # ['present','absent']
    policy: 'allow'      # ['allow','deny','reject']
@@ -134,13 +131,13 @@ ufw_policy_data: {}
 
 ### ufw_after_rules_manage: (bool)
 
-```
+```yaml
 ufw_after_rules_manage: false
 ```
 
 ### ufw_after_rules_data: (list)
 
-```
+```yaml
 ufw_after_rules_data:
   - '*filter'
   - ':ufw-after-input - [0:0]'
@@ -158,13 +155,13 @@ ufw_after_rules_data:
 
 ### ufw_after6_rules_manage: (bool)
 
-```
+```yaml
 ufw_after6_rules_manage: false
 ```
 
 ### ufw_after6_rules_data: (list)
 
-```
+```yaml
 ufw_after6_rules_data:
 - '*filter'
 - ':ufw6-after-input - [0:0]'
@@ -181,13 +178,13 @@ ufw_after6_rules_data:
 
 ### ufw_before_rules_manage: (bool)
 
-```
+```yaml
 ufw_before_rules_manage: false
 ```
 
 ### ufw_before_rules_data: (list)
 
-```
+```yaml
 ufw_before_rules_data:
   - '*filter'
   - ':ufw-before-input - [0:0]'
@@ -223,13 +220,13 @@ ufw_before_rules_data:
 
 ### ufw_before6_rules_manage: (bool)
 
-```
+```yaml
 ufw_before6_rules_manage: false
 ```
 
 ### ufw_before6_rules_data: (list)
 
-```
+```yaml
 ufw_before6_rules_data:
   - '*filter'
   - ':ufw6-before-input - [0:0]'
@@ -305,7 +302,7 @@ ufw_before6_rules_data:
 
 ## Example vars
 
-```
+```yaml
 ufw_policy_manage: true
 ufw_policy_data:
   - ensure: 'present'
