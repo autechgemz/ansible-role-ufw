@@ -1,0 +1,25 @@
+---
+
+- name: Debug config tasks
+  when: ufw_debug is defined and ufw_debug
+  block:
+
+    - name: Debug ufw_config_default
+      ansible.builtin.debug:
+        var: ufw_config_default
+    - name: Debug ufw_config_options
+      ansible.builtin.debug:
+        var: ufw_config_options
+    - name: Debug ufw_config_merged
+      ansible.builtin.debug:
+        var: ufw_config_merged
+
+    - name: Debug ufw_config_sysctl_default
+      ansible.builtin.debug:
+        var: ufw_config_sysctl_default
+    - name: Debug ufw_config_sysctl_options
+      ansible.builtin.debug:
+        var: ufw_config_sysctl_options
+    - name: Debug ufw_config_sysctl_merged
+      ansible.builtin.debug:
+        var: ufw_config_sysctl_merged

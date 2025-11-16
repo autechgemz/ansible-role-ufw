@@ -13,9 +13,9 @@
     ansible.builtin.include_vars: "{{ item }}"
     loop:
       - "{{ ansible_distribution }}.yml"
-  - name: Installation tasks
+  - name: Install tasks
     ansible.builtin.import_tasks: install.yml
-  - name: Configration tasks
+  - name: Config tasks
     ansible.builtin.import_tasks: config.yml
   - name: Setup tasks
     ansible.builtin.import_tasks: setup.yml

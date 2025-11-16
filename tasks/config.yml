@@ -1,75 +1,62 @@
 ---
 
-- name: Configration tasks
+- name: Configuration tasks
   become: true
   tags:
     - ufw_config
     - ufw
   block:
+
+    - name: Merge ufw config
+      ansible.builtin.set_fact:
+        ufw_config_merged: "{{ ufw_config_default | ansible.builtin.combine(ufw_config_options, recursive=True) }}"
+
+    - name: Merge ufw sysctl config
+      ansible.builtin.set_fact:
+        ufw_config_sysctl_merged: "{{ ufw_config_sysctl_default | ansible.builtin.combine(ufw_config_sysctl_options, recursive=True) }}"
+
+    - name: Debug variables
+      ansible.builtin.include_tasks: debug/config.yml
+      when: ufw_debug is defined and ufw_debug | bool
+
     - name: Manage ufw config
       when:
-        - ufw_config_manage is defined and ufw_config_manage
-        - ufw_config_options is defined and ufw_config_options
+        - ufw_config_manage | default(false) | bool
+        - ufw_config_options | default({})
       ansible.builtin.template:
         src: ufw.j2
         dest: /etc/default/ufw
         owner: root
         group: root
-        mode: 0644
+        mode: '0644'
       notify: Restart service
 
     - name: Manage ufw sysctl config
       when:
-        - ufw_sysctl_manage is defined and ufw_sysctl_manage
-        - ufw_config_sysctl_options is defined and ufw_config_sysctl_options
+        - ufw_sysctl_manage | default(false) | bool
+        - ufw_config_sysctl_options | default({})
       ansible.builtin.template:
         src: sysctl.conf.j2
         dest: /etc/ufw/sysctl.conf
         owner: root
         group: root
-        mode: 0644
+        mode: '0644'
       notify: Restart service
 
-    - name: Manage ufw before rules
+    - name: Manage ufw rules files
       when:
-        - ufw_before_rules_manage is defined and ufw_before_rules_manage
-        - ufw_before_rules_data is defined and ufw_before_rules_data
+        - item.manage | default(false) | bool
+        - item.data | default([]) | length > 0
       ansible.builtin.template:
-        src: before.rules.j2
-        dest: /etc/ufw/before.rules
+        src: "{{ item.template }}"
+        dest: "{{ item.dest }}"
         owner: root
         group: root
-        mode: 0644
-
-    - name: Manage ufw before6 rules
-      when:
-        - ufw_before6_rules_manage is defined and ufw_before6_rules_manage
-        - ufw_before6_rules_data is defined and ufw_before6_rules_data
-      ansible.builtin.template:
-        src: before6.rules.j2
-        dest: /etc/ufw/before6.rules
-        owner: root
-        group: root
-        mode: 0644
-
-    - name: Manage ufw after rules
-      when:
-        - ufw_after_rules_manage is defined and ufw_after_rules_manage
-        - ufw_after_rules_data is defined and ufw_after_rules_data
-      ansible.builtin.template:
-        src: after.rules.j2
-        dest: /etc/ufw/after.rules
-        owner: root
-        group: root
-        mode: 0644
-
-    - name: Manage ufw after6 rules
-      when:
-        - ufw_after6_rules_manage is defined and ufw_after6_rules_manage
-        - ufw_after6_rules_data is defined and ufw_after6_rules_data
-      ansible.builtin.template:
-        src: after6.rules.j2
-        dest: /etc/ufw/after6.rules
-        owner: root
-        group: root
-        mode: 0644
+        mode: '0644'
+      loop:
+        - { manage: "{{ ufw_before_rules_manage | default(false) }}", data: "{{ ufw_before_rules_data | default([]) }}", template: 'before.rules.j2', dest: '/etc/ufw/before.rules' }
+        - { manage: "{{ ufw_before6_rules_manage | default(false) }}", data: "{{ ufw_before6_rules_data | default([]) }}", template: 'before6.rules.j2', dest: '/etc/ufw/before6.rules' }
+        - { manage: "{{ ufw_after_rules_manage | default(false) }}", data: "{{ ufw_after_rules_data | default([]) }}", template: 'after.rules.j2', dest: '/etc/ufw/after.rules' }
+        - { manage: "{{ ufw_after6_rules_manage | default(false) }}", data: "{{ ufw_after6_rules_data | default([]) }}", template: 'after6.rules.j2', dest: '/etc/ufw/after6.rules' }
+      loop_control:
+        label: "{{ item.dest }}"

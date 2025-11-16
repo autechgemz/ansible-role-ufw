@@ -1,0 +1,5 @@
+enable_list:
+  - fqcn-builtins
+  - no-log-password
+  - no-same-owner
+warn_list: []
